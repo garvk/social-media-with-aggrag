@@ -210,7 +210,7 @@ class Base:
         """
 
         persistent_path = os.path.join(self.PERSIST_DIR, self.index_name)
-
+        print(f"Base Persistent path: {persistent_path}")
         if os.path.exists(persistent_path):
             logger.debug(f"Retrieveing index from the persistent path  : {persistent_path}")
             storage_context = StorageContext.from_defaults(persist_dir=persistent_path)
