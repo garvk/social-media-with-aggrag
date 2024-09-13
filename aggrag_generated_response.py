@@ -7,8 +7,9 @@ import asyncio
 current_dir = os.getcwd()
 
 async def main():
-
-    rag_object = AggRAG(cforge_file_path="/Users/garvkhurana/in5/social_media_with_aggrag/aggrag/configurations/Bhai Conversation__1725816673772/iteration 1/flow-1726220592988.cforge")
+    print(f"current working dir: {current_dir}")
+    cforge_file_path= os.path.join(current_dir, "configurations/Bhai Conversation__1725816673772/iteration 1/flow-1726220592988.cforge" )
+    rag_object = AggRAG(cforge_file_path=cforge_file_path)
     print(f"rag object created")
     print(f"Use case: {rag_object.usecase_name}, {rag_object.iteration}")
     # Construct the path to the 'index' directory

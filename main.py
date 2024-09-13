@@ -98,6 +98,5 @@ def get_user_access_token(code):
 
 
 if __name__ == '__main__':
-  send_comment_response(17912407755002040,
-                        "Thank you for your response, bhai.")
-  # app.run(debug=True)
+
+  app.run(debug=True)
