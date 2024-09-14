@@ -4,6 +4,12 @@ import json
 import os, sys
 import logging
 from dotenv import load_dotenv
+from library.aggrag.aggrag import AggRAG
+# Initialize the Aggrag object with the configuration from cforge
+import asyncio
+
+# Get the current working directory
+current_dir = os.getcwd()
 
 load_dotenv()
 app = Flask(__name__)
@@ -15,7 +21,7 @@ logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 
 # Replace these with your Instagram app credentials
 INSTAGRAM_APP_ID = os.getenv('INSTAGRAM_APP_ID')
-INSTAGRAM_APP_SECRET = "YOUR_INSTAGRAM_APP_SECRET"
+INSTAGRAM_APP_SECRET = os.getenv('INSTAGRAM_APP_SECRET')
 INSTAGRAM_ACCESS_TOKEN = os.getenv('INSTAGRAM_ACCESS_TOKEN')
 VERIFICATION_TOKEN = os.getenv(
     'VERIFICATION_TOKEN')  # This token is used to verify the webhook
@@ -54,6 +60,12 @@ def webhook():
           print(f"New comment: {comment_data}")
           # Get the comment ID
           comment_id = comment_data['id']
+          # TODO: Generate a response using the Aggrag object
+          loop = asyncio.new_event_loop()
+          asyncio.set_event_loop(loop)
+          response = loop.run_until_complete(
+              generate_response(comment_data['text']))
+
           send_comment_response(comment_id,
                                 "Thank you for your response, bhai.")
 
@@ -63,16 +75,17 @@ def webhook():
     return 'Invalid request', 400
 
 
-# Function to send a comment response
 def send_comment_response(comment_id, message):
   print("sending response")
   url = f"https://graph.instagram.com/v20.0/{comment_id}/replies"
-  headers = {"Authorization": f"Bearer {INSTAGRAM_ACCESS_TOKEN}"}
+  headers = {
+      "Authorization": f"Bearer {INSTAGRAM_ACCESS_TOKEN}",
+      "Content-Type": "application/json"
+  }
   data = {"message": message}
-  print(f"url: {url}, {headers}")
-  response = requests.post(url, headers=headers, data=json.dumps(data))
+  print(f"url: {url}, headers: {headers}, data: {data}")
+  response = requests.post(url, headers=headers, json=data)
   print(f"response recvd: {response.json()}")
-  # print(f"requests: {response.__dict__}")
   if response.status_code == 200:
     logging.debug(f"Comment response sent successfully: {message}")
   else:
@@ -97,6 +110,30 @@ def get_user_access_token(code):
     return None
 
 
-if __name__ == '__main__':
+async def generate_response(comment: str):
+  print(f"current working dir: {current_dir}")
+  cforge_file_path = os.path.join(
+      current_dir,
+      "configurations/Bhai Conversation__1725816673772/iteration 1/flow-1726220592988.cforge"
+  )
+  rag_object = AggRAG(cforge_file_path=cforge_file_path)
+  print(f"rag object created")
+  print(f"Use case: {rag_object.usecase_name}, {rag_object.iteration}")
+  # Construct the path to the 'index' directory
+  index_dir = os.path.join(current_dir, 'configurations',
+                           rag_object.usecase_name, rag_object.iteration,
+                           'index')
+  rag_object.ragstore.base.index_name = "base_index_1__1726221463705_1726222962860"
+  rag_object.ragstore.base.PERSIST_DIR = index_dir
+  # Update the PERSIST_DIR
+  rag_object.PERSIST_DIR = index_dir
 
+  await rag_object.retrieve_all_index_async()
+  response = await rag_object.ragstore_chat(query=comment)
+  print(response)
+  return response
+
+
+if __name__ == '__main__':
+  # asyncio.run(main())
   app.run(debug=True)
