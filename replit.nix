@@ -1,0 +1,32 @@
+{pkgs}: {
+  deps = [
+    pkgs.cacert
+    pkgs.tk
+    pkgs.tcl
+    pkgs.openjpeg
+    pkgs.libwebp
+    pkgs.libtiff
+    pkgs.libjpeg
+    pkgs.libimagequant
+    pkgs.lcms2
+    pkgs.freetype
+    pkgs.arrow-cpp
+    pkgs.libcxx
+    pkgs.iana-etc
+    pkgs.llvm
+    pkgs.xsimd
+    pkgs.libyaml
+    pkgs.bash
+    pkgs.libxcrypt
+    pkgs.libffi
+    pkgs.glibcLocales
+    pkgs.rustc
+    pkgs.libiconv
+    pkgs.cargo
+    pkgs.zlib
+    pkgs.pkg-config
+    pkgs.openssl
+    pkgs.grpc
+    pkgs.c-ares
+  ];
+}
