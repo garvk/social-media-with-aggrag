@@ -1,7 +1,7 @@
 
 # 🎛️ Social Media with Aggrag 
 
-It's an example application to demonstrate how aggrag can be integrated into other applications that leverage LLM models. 
+It's an example application to demonstrate how aggrag can be integrated into other applications that leverage LLM models. Following generate_response method in 'main.py' code will help understand how aggrag is integrated. 
 
 This application responds to comments on instagram post based on the settings done on aggrag UI. The settings can be viewed by importing the 'iteration 1.cforge' file into the UI.
 
